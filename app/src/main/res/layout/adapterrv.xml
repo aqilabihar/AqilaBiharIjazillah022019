@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
-    app:cardElevation="10dp"
+    android:id="@+id/cardnya"
+    app:cardElevation="50dp"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -13,8 +14,10 @@
         android:orientation="horizontal"
         >
         <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:id="@+id/Gambar"
+            android:layout_height="wrap_content"
+
             android:background="@drawable/ic_launcher_background"
             ></ImageView>
         <LinearLayout
@@ -23,11 +26,13 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
             <TextView
+                android:id="@+id/TVjudul"
                 android:layout_width="wrap_content"
                 android:text="asek"
                 android:layout_marginBottom="5dp"
                 android:layout_height="wrap_content"></TextView>
             <TextView
+                android:id="@+id/TVdesc"
                 android:layout_width="wrap_content"
                 android:text="wawa"
                 android:layout_height="wrap_content"></TextView>

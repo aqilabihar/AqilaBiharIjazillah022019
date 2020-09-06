@@ -3,6 +3,7 @@ package com.example.projectku;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -22,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
 
     private View decorview;
 
+    SharedPreferences pref;
+    SharedPreferences.Editor editor;
 
     ImageView Logo;
     TextView welcome;
@@ -53,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         // call id
+        pref = getSharedPreferences("Login", MODE_PRIVATE);
         KGUsername = (EditText) findViewById(R.id.KNUsername);
         KGPassword = (EditText) findViewById(R.id.KNPassword);
         Login = (Button) findViewById(R.id.Login);
@@ -63,10 +67,17 @@ public class MainActivity extends AppCompatActivity {
         // logger
         Login.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if (KGUsername.getText().toString().equalsIgnoreCase("aqila")|
-                    KGPassword.getText().toString().equalsIgnoreCase("aqila")){
-                    Intent pind = new Intent(MainActivity.this,Main_Menu_Activity.class);
+            public void onClick(View view) {
+                if (KGUsername.getText().toString().equalsIgnoreCase("Aqila")
+                        && KGPassword.getText().toString().equalsIgnoreCase("Aqila")){
+                    //saving ke SP
+                    editor = pref.edit();
+                    editor.putString("username", KGUsername.getText().toString());
+                    editor.putString("status", "login");
+                    editor.apply();
+                    //menuju ke main menu
+                    startActivity(new Intent(getApplicationContext(), Main_Menu_Activity.class));
+                    finish();
                 }else{
                     Toast.makeText(MainActivity.this,"akun belum terdaftar",Toast.LENGTH_SHORT).show();
                 }
