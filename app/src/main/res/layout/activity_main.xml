@@ -71,7 +71,8 @@
                 android:id="@+id/KNUsername"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:text="isi disini"></EditText>
+                android:textColor="#ffffff"
+                android:hint="isi di sini"></EditText>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -86,8 +87,11 @@
             <EditText
                 android:id="@+id/KNPassword"
                 android:layout_width="150dp"
+                android:textColor="#ffffff"
+                android:inputType="textPassword"
+                android:hint="isi disini"
                 android:layout_height="wrap_content"
-                android:text="isi disini"></EditText>
+                ></EditText>
         </LinearLayout>
         <Button
             android:layout_width="wrap_content"

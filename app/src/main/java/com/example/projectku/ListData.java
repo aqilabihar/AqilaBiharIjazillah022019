@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -33,78 +34,14 @@ public class ListData extends AppCompatActivity {
     private ArrayList<Model> DataArrayList; //kit add kan ke adapter
     private ImageView tambah_data;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_data);
         recyclerView = (RecyclerView) findViewById(R.id.rvdata);
         //addData();
-        adddataonline();
+        addDataOnline();
     }
-
-    void adddataonline() {
-        AndroidNetworking.get(  "https://api.themoviedb.org/3/movie/popular?api_key=67aa4b9aa96ca4a7a54051dcbc206656&language=en-US&page=1")
-                .setTag("test")
-                .setPriority(Priority.LOW)
-                .build()
-                .getAsJSONObject(new JSONObjectRequestListener() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        // do anything with response
-                        Log.d("hasiljson", "onResponse: " + response.toString());
-                        //jika sudah berhasil debugm lanjutkan code dibawah ini
-                        DataArrayList = new ArrayList<>();
-
-                        Model mymodel;
-                        try {
-                            Log.d("hasiljson", "onResponse: " + response.toString());
-                            JSONArray jsonArray = response.getJSONArray("results");
-                            Log.d("hasiljson2", "onResponse: " + jsonArray.toString());
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                mymodel = new Model();
-                                mymodel.setOriginal_title(jsonObject.getString("original_title"));
-                                mymodel.setOverview(jsonObject.getString("overview"));
-                                mymodel.setPoster_path("https://image.tmdb.org/t/p/w500" + jsonObject.getString("poster_path"));
-                                mymodel.setAdult(jsonObject.getBoolean("adult"));
-                                mymodel.setRelease_date(jsonObject.getString("release_date"));
-                                mymodel.setVote_count(jsonObject.getInt("vote_average"));
-
-                                DataArrayList.add(mymodel);
-
-                            }
-
-                            adapter = new class_adapter(DataArrayList, new class_adapter.Callback() {
-                                @Override
-                                public void onClick(int position) {
-
-                                }
-
-                                @Override
-                                public void test() {
-
-                                }
-                            });
-                            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(ListData.this);
-                            recyclerView.setLayoutManager(layoutManager);
-                            recyclerView.setAdapter(adapter);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onError(ANError error) {
-                        // handle error
-                        Log.d("errorku", "onError errorCode : " + error.getErrorCode());
-                        Log.d("errorku", "onError errorBody : " + error.getErrorBody());
-                        Log.d("errorku", "onError errorDetail : " + error.getErrorDetail());
-                    }
-                });
-    }
-
-
     void addData() {
         //offline, isi data offline dulu
         DataArrayList = new ArrayList<>();
@@ -137,4 +74,73 @@ public class ListData extends AppCompatActivity {
 
 
     }
+
+    void addDataOnline(){
+        AndroidNetworking.get("https://api.themoviedb.org/3/movie/now_playing?api_key=6ac7a042ac3b7599a689eb943fa0b6d0&language=en-US")
+                .setTag("test")
+                .setPriority(Priority.LOW)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // do anything with response
+                        Log.d("hasiljson", "onResponse: " + response.toString());
+                        //jika sudah berhasil debugm lanjutkan code dibawah ini
+                        DataArrayList = new ArrayList<>();
+                        Model modelku;
+                        try {
+                            Log.d("hasiljson", "onResponse: " + response.toString());
+                            JSONArray jsonArray = response.getJSONArray("results");
+                            Log.d("hasiljson2", "onResponse: " + jsonArray.toString());
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                modelku = new Model();
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                modelku.setId(jsonObject.getInt("id"));
+                                modelku.setOriginal_title(jsonObject.getString("original_title"));
+                                modelku.setOverview(jsonObject.getString("overview"));
+                                modelku.setRelease_date(jsonObject.getString("release_date"));
+                                modelku.setPoster_path("https://image.tmdb.org/t/p/w500"+jsonObject.getString("poster_path"));
+                                modelku.setAdult(jsonObject.getBoolean("adult"));
+                                modelku.setVote_count(jsonObject.getInt("vote_count"));
+                                DataArrayList.add(modelku);
+                            }
+                            //untuk handle click
+                            adapter = new class_adapter(DataArrayList, new class_adapter.Callback() {
+                                @Override
+                                public void onClick(int position) {
+                                    Model movie = DataArrayList.get(position);
+                                    Intent intent = new Intent(getApplicationContext(), DetailMovie.class);
+                                    intent.putExtra("id",movie.id);
+                                    intent.putExtra("judul",movie.original_title);
+                                    intent.putExtra("date",movie.release_date);
+                                    intent.putExtra("deskripsi",movie.overview);
+                                    intent.putExtra("path",movie.poster_path);
+                                    startActivity(intent);
+                                    Toast.makeText(ListData.this, ""+position, Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void test() {
+
+                                }
+                            });
+                            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(ListData.this);
+                            recyclerView.setLayoutManager(layoutManager);
+                            recyclerView.setAdapter(adapter);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    @Override
+                    public void onError(ANError error) {
+                        // handle error
+                        Log.d("errorku", "onError errorCode : " + error.getErrorCode());
+                        Log.d("errorku", "onError errorBody : " + error.getErrorBody());
+                        Log.d("errorku", "onError errorDetail : " + error.getErrorDetail());
+                    }
+                });
+    }
+
 }
